@@ -1,4 +1,4 @@
 eventstore-client
 ====
 
-Event Store API client
+A low level Event Store API client
