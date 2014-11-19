@@ -1,55 +1,48 @@
 ﻿var chai = require('chai'),
   proxyquire = require('proxyquire'),
   sinon = require('sinon'),
+  EventStore = require('../lib/eventstore'),
+  es = {},
   requestStub = {},
-  eventStore = proxyquire('../lib/index', {
+  Stream = proxyquire('../lib/stream', {
     'request': requestStub
-  }),
-  es = new eventStore({
-    baseUrl: 'http://localhost:1234',
-    username: 'admin',
-    password: 'changeit'
   });
 
-
 describe('stream', function() {
+  before(function() {
+    es = new EventStore({
+      baseUrl: 'http://localhost:1234',
+      username: 'admin',
+      password: 'changeit'
+    });
+  });
 
   describe('get', function() {
-
-    before(function() {
-
-      //requestStub.get = sinon.stub().callsArgWith(1, null, {});
-      
-    });
-
     it('should call the proper url with the proper headers', function(done) {
-      requestStub.get = function(options, cb) {
-        console.log('fuckers!');
+
+      requestStub.get = sinon.spy(function(options, cb) {
         cb('error', 'response');
+      });
+
+      var expect = {
+        url: 'http://localhost:1234/stream/streamName/head/5?embed=content',
+        rejectUnauthorized: false,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ=',
+        }
       };
 
-      var mock = sinon.mock(requestStub);
-      mock.expects("get").once();
+      var stream = new Stream(es);
 
-      // var expect = {
-      //   url: 'http://localhost:1234/streams/repo-someowner-somerepo/head?embed=content',
-      //   rejectUnauthorized: false,
-      //   headers: {
-      //     'Accept': 'application/json',
-      //     'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ=',
-      //   }
-      // };
-
-      es.stream.get({
+      stream.get({
         name: 'streamName'
       }, function(error, response) {
-        console.log('Error 2: ' + error);
-        console.log('Response 2:' + response);
-        //chai.should();
-        //(requestStub.get.calledWith(expect)).should.equal(true);
-        //assert.equal(requestStub.get.calledWith(expect), true);
-        //mock.verify();
+        chai.should();
+        requestStub.get.called.should.equal(true);
+        (requestStub.get.calledWith(expect)).should.equal(true);
         done();
+
       });
     });
 
