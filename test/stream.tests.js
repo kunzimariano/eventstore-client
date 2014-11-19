@@ -18,7 +18,7 @@ describe('stream', function() {
   });
 
   describe('get', function() {
-    it('should call the proper url with the proper headers', function(done) {
+    it('should call the proper url with the proper headers.', function(done) {
 
       requestStub.get = sinon.spy(function(options, cb) {
         cb('error', 'response');
@@ -46,5 +46,41 @@ describe('stream', function() {
       });
     });
   });
-  
+
+  describe('post', function() {
+    it('should call the proper url with the proper headers and body.', function(done) {
+
+      requestStub.post = sinon.spy(function(options, cb) {
+        cb('error', 'response');
+      });
+
+      var body = '{ "someproperty" : "somevalue" }';
+
+      var expect = {
+        url: 'http://localhost:1234/stream/streamName',
+        rejectUnauthorized: false,
+        body: body,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/vnd.eventstore.events+json',
+          'Content-Length': body.length,
+          'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ='
+        }
+      };
+
+      var stream = new Stream(es);
+
+      stream.post({
+        name: 'streamName',
+        events: '{ "someproperty" : "somevalue" }',
+      }, function(error, response) {
+        chai.should();
+        requestStub.post.called.should.equal(true);
+        requestStub.post.calledWith(expect).should.equal(true);
+        done();
+
+      });
+    });
+  });
+
 });
