@@ -5,9 +5,10 @@
   "main": "./lib/index",
   "repository": "https://github.com/kunzimariano/eventstore-client.git",
   "dependencies": {
+    "chai": "^1.10.0",
     "mocha": "^1.21.5",
     "proxyquire": "^1.0.1",
-    "request": "^2.44.0",    
+    "request": "^2.44.0",
     "sinon": "^1.11.1"
   },
   "scripts": {

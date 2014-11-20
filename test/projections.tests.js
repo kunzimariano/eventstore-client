@@ -4,11 +4,11 @@
   EventStore = require('../lib/eventstore'),
   es = {},
   requestStub = {},
-  Stream = proxyquire('../lib/stream', {
+  Projections = proxyquire('../lib/projections', {
     'request': requestStub
   });
 
-describe('stream', function() {
+describe('projections', function() {
   before(function() {
     es = new EventStore({
       baseUrl: 'http://localhost:1234',
@@ -25,7 +25,7 @@ describe('stream', function() {
       });
 
       var expect = {
-        url: 'http://localhost:1234/stream/streamName/head/5?embed=content',
+        url: 'http://localhost:1234/projections/all-non-transient',
         rejectUnauthorized: false,
         headers: {
           'Accept': 'application/json',
@@ -33,11 +33,9 @@ describe('stream', function() {
         }
       };
 
-      var stream = new Stream(es);
+      var projections = new Projections(es);
 
-      stream.get({
-        name: 'streamName'
-      }, function(error, response) {
+      projections.get(function(error, response) {
         chai.should();
         requestStub.get.called.should.equal(true);
         requestStub.get.calledWith(expect).should.equal(true);
@@ -54,25 +52,26 @@ describe('stream', function() {
         cb('error', 'response');
       });
 
-      var body = '{ "someproperty" : "somevalue" }';
+      var name = 'myprojection';
+      var body = 'console.log("this projection does nothing useful.")';
 
       var expect = {
-        url: 'http://localhost:1234/stream/streamName',
+        url: 'http://localhost:1234/projections/continuous?emit=yes&checkpoints=yes&enabled=yes&name=' + name,
         rejectUnauthorized: false,
         body: body,
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/vnd.eventstore.events+json',
+          'Content-Type': 'application/json;charset=utf-8',
           'Content-Length': body.length,
           'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ='
         }
       };
 
-      var stream = new Stream(es);
+      var projections = new Projections(es);
 
-      stream.post({
-        name: 'streamName',
-        events: '{ "someproperty" : "somevalue" }',
+      projections.post({
+        name: name,
+        projection: body,
       }, function(error, response) {
         chai.should();
         requestStub.post.called.should.equal(true);
@@ -82,5 +81,4 @@ describe('stream', function() {
       });
     });
   });
-
 });
