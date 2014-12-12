@@ -25,7 +25,7 @@ describe('stream', function() {
       });
 
       var expect = {
-        url: 'http://localhost:1234/stream/streamName/head/5?embed=content',
+        url: 'http://localhost:1234/streams/streamName/head/5?embed=content',
         rejectUnauthorized: false,
         headers: {
           'Accept': 'application/json',
@@ -57,7 +57,7 @@ describe('stream', function() {
       var body = '{ "someproperty" : "somevalue" }';
 
       var expect = {
-        url: 'http://localhost:1234/stream/streamName',
+        url: 'http://localhost:1234/streams/streamName',
         rejectUnauthorized: false,
         body: body,
         headers: {
