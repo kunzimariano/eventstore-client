@@ -4,11 +4,11 @@
   EventStore = require('../lib/eventstore'),
   es = {},
   requestStub = {},
-  Stream = proxyquire('../lib/stream', {
+  Streams = proxyquire('../lib/streams', {
     'request': requestStub
   });
 
-describe('stream', function() {
+describe('streams', function() {
   before(function() {
     es = new EventStore({
       baseUrl: 'http://localhost:1234',
@@ -33,9 +33,9 @@ describe('stream', function() {
         }
       };
 
-      var stream = new Stream(es);
+      var streams = new Streams(es);
 
-      stream.get({
+      streams.get({
         name: 'streamName'
       }, function(error, response) {
         chai.should();
@@ -68,9 +68,9 @@ describe('stream', function() {
         }
       };
 
-      var stream = new Stream(es);
+      var streams = new Streams(es);
 
-      stream.post({
+      streams.post({
         name: 'streamName',
         events: '{ "someproperty" : "somevalue" }',
       }, function(error, response) {
