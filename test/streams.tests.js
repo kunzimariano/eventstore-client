@@ -18,26 +18,43 @@ describe('streams', function() {
   });
 
   describe('get', function() {
-    it('should call the proper url with the proper headers when passing a stream name.', function(done) {
+    requestStub.get = sinon.spy(function(options, cb) {
+      cb('error', 'response');
+    });
 
-      requestStub.get = sinon.spy(function(options, cb) {
-        cb('error', 'response');
+    var expect = {
+      url: '',
+      rejectUnauthorized: false,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ=',
+      }
+    };
+
+    it('should call the proper url with the proper headers when passing just the stream name.', function(done) {
+      expect.url = 'http://localhost:1234/streams/streamName/head/5?embed=content';
+
+      var streams = new Streams(es);
+
+      streams.get({
+        name: 'streamName'
+      }, function(error, response) {
+        chai.should();
+        requestStub.get.called.should.equal(true);
+        requestStub.get.calledWith(expect).should.equal(true);
+        done();
+
       });
+    });
 
-      var expect = {
-        url: 'http://localhost:1234/streams/streamName/head/6?embed=content',
-        rejectUnauthorized: false,
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ=',
-        }
-      };
+    it('should call the proper url with the proper headers when passing the stream name and count.', function(done) {
+      expect.url = 'http://localhost:1234/streams/streamName/head/10?embed=content';
 
       var streams = new Streams(es);
 
       streams.get({
         name: 'streamName',
-        count: 6
+        count: 10
       }, function(error, response) {
         chai.should();
         requestStub.get.called.should.equal(true);
