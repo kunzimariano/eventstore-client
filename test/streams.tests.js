@@ -32,7 +32,7 @@ describe('streams', function() {
     };
 
     it('should call the proper url with the proper headers when passing just the stream name.', function(done) {
-      expect.url = 'http://localhost:1234/streams/streamName/head/5?embed=content';
+      expect.url = 'http://localhost:1234/streams/streamName/head/25?embed=content';
 
       var streams = new Streams(es);
 
