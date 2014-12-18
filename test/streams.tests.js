@@ -18,14 +18,14 @@ describe('streams', function() {
   });
 
   describe('get', function() {
-    it('should call the proper url with the proper headers.', function(done) {
+    it('should call the proper url with the proper headers when passing a stream name.', function(done) {
 
       requestStub.get = sinon.spy(function(options, cb) {
         cb('error', 'response');
       });
 
       var expect = {
-        url: 'http://localhost:1234/streams/streamName/head/5?embed=content',
+        url: 'http://localhost:1234/streams/streamName/head/6?embed=content',
         rejectUnauthorized: false,
         headers: {
           'Accept': 'application/json',
@@ -36,7 +36,8 @@ describe('streams', function() {
       var streams = new Streams(es);
 
       streams.get({
-        name: 'streamName'
+        name: 'streamName',
+        count: 6
       }, function(error, response) {
         chai.should();
         requestStub.get.called.should.equal(true);
@@ -45,6 +46,37 @@ describe('streams', function() {
 
       });
     });
+
+    it('should call the proper url with the proper headers when passing a pageUrl.', function(done) {
+
+      requestStub.get = sinon.spy(function(options, cb) {
+        cb('error', 'response');
+      });
+
+      var url = 'http://localhost:2113/streams/streamName/12345/backward/5';
+
+      var expect = {
+        url: url + '?embed=content',
+        rejectUnauthorized: false,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ=',
+        }
+      };
+
+      var streams = new Streams(es);
+
+      streams.get({
+        pageUrl: url
+      }, function(error, response) {
+        chai.should();
+        requestStub.get.called.should.equal(true);
+        requestStub.get.calledWith(expect).should.equal(true);
+        done();
+
+      });
+    });
+
   });
 
   describe('post', function() {
