@@ -18,22 +18,24 @@ describe('projection', function() {
   });
 
   describe('getState', function() {
-    it('should call the proper url with the proper headers.', function(done) {
+    requestStub.get = sinon.spy(function(options, cb) {
+      cb('error', 'response');
+    });
 
-      requestStub.get = sinon.spy(function(options, cb) {
-        cb('error', 'response');
-      });
+    var name = 'myProjection';
+    var partition = 'myPartition';
 
-      var name = 'myProjection';
+    var expect = {
+      url: '',
+      rejectUnauthorized: false,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ=',
+      }
+    };
 
-      var expect = {
-        url: 'http://localhost:1234/projection/' + name + '/state',
-        rejectUnauthorized: false,
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ=',
-        }
-      };
+    it('should call the proper url with the proper headers when specifying just the name of the projection.', function(done) {
+      expect.url = 'http://localhost:1234/projection/' + name + '/state';
 
       var projection = new Projection(es);
 
@@ -46,5 +48,22 @@ describe('projection', function() {
         done();
       });
     });
+
+    it('should call the proper url with the proper headers when specifying the name of the projection and the partition.', function(done) {
+      expect.url = 'http://localhost:1234/projection/' + name + '/state?partition=' + partition;
+
+      var projection = new Projection(es);
+
+      projection.getState({
+        name: name,
+        partition: partition
+      }, function(error, response) {
+        chai.should();
+        requestStub.get.called.should.equal(true);
+        requestStub.get.calledWith(expect).should.equal(true);
+        done();
+      });
+    });
+
   });
 });
