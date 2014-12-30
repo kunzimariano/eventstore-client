@@ -66,4 +66,38 @@ describe('projection', function() {
     });
 
   });
+
+  describe('postCommand', function() {
+    requestStub.post = sinon.spy(function(options, cb) {
+      cb('error', 'response');
+    });
+
+    var name = 'someProjection';
+    var command = 'enable';
+
+    var expect = {
+      url: 'http://localhost:1234/projection/someProjection/command/enable',
+      rejectUnauthorized: false,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ=',
+      }
+    };
+
+    it('should call the proper url with the proper headers when specifying the name of the projection and the command.', function(done) {
+      var projection = new Projection(es);
+
+      projection.postCommand({
+        name: name,
+        command: command
+      }, function(error, response) {
+        chai.should();
+        requestStub.post.called.should.equal(true);
+        requestStub.post.calledWith(expect).should.equal(true);
+        done();
+      });
+
+    });
+
+  });
 });
