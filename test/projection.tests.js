@@ -123,7 +123,6 @@ describe('projection', function() {
 
       projection.enableSystemAll(function(error, response) {
         expect.url = 'http://localhost:1234/projection/' + systemProjections[iteration] + '/command/enable';
-        console.log(expect);
         requestStub.post.calledWith(expect).should.equal(true);
         iteration++;
 
