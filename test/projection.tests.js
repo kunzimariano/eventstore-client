@@ -100,4 +100,38 @@ describe('projection', function() {
     });
 
   });
+
+  describe('enableSystemAll', function(argument) {
+    it('should call the proper url with the proper headers and body.', function(done) {
+
+      requestStub.post = sinon.spy(function(options, cb) {
+        cb('error', 'response');
+      });
+
+      var expect = {
+        url: '',
+        rejectUnauthorized: false,
+        headers: {
+          'Content-Length': 0,
+          'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ='
+        }
+      };
+      var systemProjections = ['$by_category', '$by_event_type', '$stream_by_category', '$streams'];
+
+      var projection = new Projection(es);
+      var iteration = 0;
+
+      projection.enableSystemAll(function(error, response) {
+        expect.url = 'http://localhost:1234/projection/' + systemProjections[iteration] + '/command/enable';
+        requestStub.post.calledWith(expect).should.equal(true);
+        iteration++;
+
+        if (iteration === 4) {
+          chai.should();
+          requestStub.post.callCount.should.equal(4);
+          done();
+        }
+      });
+    });
+  });
 });
