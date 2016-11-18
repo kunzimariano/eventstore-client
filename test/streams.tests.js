@@ -112,7 +112,6 @@ describe('streams', function() {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/vnd.eventstore.events+json',
-          'Content-Length': body.length,
           'Authorization': 'Basic YWRtaW46Y2hhbmdlaXQ='
         }
       };

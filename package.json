@@ -1,6 +1,6 @@
 {
   "name": "eventstore-client",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Event Store API client.",
   "main": "./lib/index",
   "repository": "https://github.com/openAgile/eventstore-client.git",
